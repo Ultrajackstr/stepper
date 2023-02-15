@@ -14,3 +14,8 @@ pololu_url = "https://www.pololu.com/category/154/"
 name = "stspin220"
 product_url = "https://www.st.com/en/motor-drivers/stspin220.html"
 pololu_url = "https://www.pololu.com/category/260/"
+
+[[drivers]]
+name = "tb67s128ftg"
+product_url = "https://toshiba.semicon-storage.com/us/semiconductor/product/motor-driver-ics/stepping-motor-driver-ics/detail.TB67S128FTG.html"
+pololu_url = "https://www.pololu.com/product/2998"

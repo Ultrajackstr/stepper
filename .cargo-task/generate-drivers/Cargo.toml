@@ -6,11 +6,11 @@ edition = "2018"
 publish = false
 
 [dependencies]
-serde = "1.0.117"
-serde_derive = "1.0.117"
-serde_json = "1.0.59"
-tinytemplate = "1.1.0"
-toml = "0.5.7"
+serde = "1.0.152"
+serde_derive = "1.0.152"
+serde_json = "1.0.93"
+tinytemplate = "1.2.1"
+toml = "0.5.11"
 
 [dependencies.cargo_task_util]
 path = "../cargo_task_util"

@@ -15,3 +15,6 @@ pub mod stspin220;
 
 #[cfg(feature = "dq542ma")]
 pub mod dq542ma;
+
+#[cfg(feature = "tb67s128ftg")]
+pub mod tb67s128ftg;
