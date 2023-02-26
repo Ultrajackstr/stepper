@@ -4,8 +4,8 @@
 
 use fugit::{NanosDuration, TimerDuration, TimerInstant};
 use fugit_timer::Timer;
-use crate::TimeStorageFormat;
 
+use crate::TimeStorageFormat;
 use crate::traits::{MotionControl, SetDirection, SetStepMode, Step};
 
 /// Generic wrapper around a mutable reference
@@ -20,8 +20,8 @@ use crate::traits::{MotionControl, SetDirection, SetStepMode, Step};
 pub struct RefMut<'r, T>(pub &'r mut T);
 
 impl<'r, T, const TIMER_HZ: u32> Timer<TIMER_HZ> for RefMut<'r, T>
-where
-    T: Timer<TIMER_HZ>,
+    where
+        T: Timer<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     type Error = T::Error;
     type TimeStorage = TimeStorageFormat;
@@ -47,8 +47,8 @@ where
 }
 
 impl<'r, T> MotionControl for RefMut<'r, T>
-where
-    T: MotionControl,
+    where
+        T: MotionControl,
 {
     type Velocity = T::Velocity;
     type Error = T::Error;
@@ -71,8 +71,8 @@ where
 }
 
 impl<'r, T> SetDirection for RefMut<'r, T>
-where
-    T: SetDirection,
+    where
+        T: SetDirection,
 {
     const SETUP_TIME: NanosDuration<TimeStorageFormat> = T::SETUP_TIME;
 
@@ -85,8 +85,8 @@ where
 }
 
 impl<'r, T> SetStepMode for RefMut<'r, T>
-where
-    T: SetStepMode,
+    where
+        T: SetStepMode,
 {
     const SETUP_TIME: NanosDuration<TimeStorageFormat> = T::SETUP_TIME;
     const HOLD_TIME: NanosDuration<TimeStorageFormat> = T::HOLD_TIME;
@@ -107,8 +107,8 @@ where
 }
 
 impl<'r, T> Step for RefMut<'r, T>
-where
-    T: Step,
+    where
+        T: Step,
 {
     const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = T::PULSE_LENGTH;
 
