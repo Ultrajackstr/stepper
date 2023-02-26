@@ -173,10 +173,10 @@ pub mod util;
 
 mod stepper;
 
-/// The type used to store time values, u32 or u64 (default)
+/// The type used to store time values, u32 (default) or u64
 #[cfg(feature = "u64")]
 pub type TimeStorageFormat = u64;
-/// The type used to store time values, u32 or u64 (default)
+/// The type used to store time values, u32 (default) or u64
 #[cfg(not(feature = "u64"))]
 pub type TimeStorageFormat = u32;
 
