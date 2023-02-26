@@ -173,6 +173,11 @@ mod stepper;
 
 pub use self::stepper::*;
 
+#[cfg(feature = "u64")]
+pub type TimeStorageFormat = u64;
+#[cfg(not(feature = "u64"))]
+pub type TimeStorageFormat = u32;
+
 /// Defines the direction in which to rotate the motor
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Direction {
