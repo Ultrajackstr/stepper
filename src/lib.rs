@@ -30,7 +30,7 @@
 //! #     > {
 //! #
 //! use stepper::{
-//!     fugit::NanosDurationU32 as NanosDuration<TimeStorageFormat>,
+//!     fugit::NanosDuration<TimeStorageFormat>,
 //!     motion_control, ramp_maker,
 //!     Direction, Stepper,
 //! };
@@ -162,6 +162,8 @@ pub extern crate embedded_hal;
 pub extern crate fugit;
 pub extern crate ramp_maker;
 
+pub use self::stepper::*;
+
 pub mod compat;
 pub mod drivers;
 pub mod motion_control;
@@ -171,10 +173,10 @@ pub mod util;
 
 mod stepper;
 
-pub use self::stepper::*;
-
+/// The type used to store time values, u32 or u64 (default)
 #[cfg(feature = "u64")]
 pub type TimeStorageFormat = u64;
+/// The type used to store time values, u32 or u64 (default)
 #[cfg(not(feature = "u64"))]
 pub type TimeStorageFormat = u32;
 
