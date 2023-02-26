@@ -214,7 +214,7 @@ where
 {
     let delay: TimerDuration<TimeStorageFormat,TIMER_HZ> = convert
         .delay_to_ticks(delay)
-        .map_err(|err| TimeConversionError::DelayToTicks(err))?;
+        .map_err(TimeConversionError::DelayToTicks)?;
     let pulse_length: TimerDuration<TimeStorageFormat,TIMER_HZ> = pulse_length.convert();
 
     let delay_left = delay - pulse_length;

@@ -286,7 +286,7 @@ where
         let steps_from_here = target_step - self.current_step;
 
         self.profile
-            .enter_position_mode(max_velocity, steps_from_here.abs() as u32);
+            .enter_position_mode(max_velocity, steps_from_here.unsigned_abs());
 
         let direction = if steps_from_here > 0 {
             Direction::Forward
@@ -352,7 +352,7 @@ where
         match self.driver_mut() {
             Some(driver) => driver
                 .apply_mode_config(step_mode)
-                .map_err(|err| BusyError::Other(err)),
+                .map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
@@ -360,7 +360,7 @@ where
     fn enable_driver(&mut self) -> Result<(), Self::Error> {
         match self.driver_mut() {
             Some(driver) => {
-                driver.enable_driver().map_err(|err| BusyError::Other(err))
+                driver.enable_driver().map_err(BusyError::Other)
             }
             None => Err(BusyError::Busy),
         }
@@ -380,7 +380,7 @@ where
 
     fn dir(&mut self) -> Result<&mut Self::Dir, Self::Error> {
         match self.driver_mut() {
-            Some(driver) => driver.dir().map_err(|err| BusyError::Other(err)),
+            Some(driver) => driver.dir().map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
@@ -399,7 +399,7 @@ where
 
     fn step(&mut self) -> Result<&mut Self::Step, Self::Error> {
         match self.driver_mut() {
-            Some(driver) => driver.step().map_err(|err| BusyError::Other(err)),
+            Some(driver) => driver.step().map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }

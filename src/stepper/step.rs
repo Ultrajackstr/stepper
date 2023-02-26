@@ -72,16 +72,16 @@ where
                 // Start step pulse
                 self.driver
                     .step()
-                    .map_err(|err| SignalError::PinUnavailable(err))?
+                    .map_err(SignalError::PinUnavailable)?
                     .set_high()
-                    .map_err(|err| SignalError::Pin(err))?;
+                    .map_err(SignalError::Pin)?;
 
                 let ticks: TimerDuration<TimeStorageFormat, TIMER_HZ> =
                     Driver::PULSE_LENGTH.convert();
 
                 self.timer
                     .start(ticks)
-                    .map_err(|err| SignalError::Timer(err))?;
+                    .map_err(SignalError::Timer)?;
 
                 self.state = State::PulseStarted;
                 Poll::Pending
@@ -92,9 +92,9 @@ where
                         // End step pulse
                         self.driver
                             .step()
-                            .map_err(|err| SignalError::PinUnavailable(err))?
+                            .map_err(SignalError::PinUnavailable)?
                             .set_low()
-                            .map_err(|err| SignalError::Pin(err))?;
+                            .map_err(SignalError::Pin)?;
 
                         self.state = State::Finished;
                         Poll::Ready(Ok(()))
