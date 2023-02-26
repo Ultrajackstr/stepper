@@ -1,9 +1,7 @@
 use core::task::Poll;
 
 use embedded_hal::digital::ErrorType;
-use fugit::{
-    NanosDurationU32 as NanosDuration<TimeStorageFormat>, TimerDurationU32 as TimerDuration,
-};
+use fugit::{NanosDuration, TimerDuration};
 use fugit_timer::Timer as TimerTrait;
 use ramp_maker::MotionProfile;
 
@@ -129,7 +127,7 @@ where
                         *current_step += *current_direction as i32;
 
                         let (driver, mut timer) = future.release();
-                        let delay_left: TimerDuration<TIMER_HZ> =
+                        let delay_left: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                             match delay_left(
                                 delay,
                                 Driver::PULSE_LENGTH,
@@ -210,14 +208,14 @@ fn delay_left<Delay, Convert, const TIMER_HZ: u32>(
     delay: Delay,
     pulse_length: NanosDuration<TimeStorageFormat>,
     convert: &Convert,
-) -> Result<TimerDuration<TIMER_HZ>, TimeConversionError<Convert::Error>>
+) -> Result<TimerDuration<TimeStorageFormat,TIMER_HZ>, TimeConversionError<Convert::Error>>
 where
     Convert: DelayToTicks<Delay, TIMER_HZ>,
 {
-    let delay: TimerDuration<TIMER_HZ> = convert
+    let delay: TimerDuration<TimeStorageFormat,TIMER_HZ> = convert
         .delay_to_ticks(delay)
         .map_err(|err| TimeConversionError::DelayToTicks(err))?;
-    let pulse_length: TimerDuration<TIMER_HZ> = pulse_length.convert();
+    let pulse_length: TimerDuration<TimeStorageFormat,TIMER_HZ> = pulse_length.convert();
 
     let delay_left = delay - pulse_length;
     Ok(delay_left)

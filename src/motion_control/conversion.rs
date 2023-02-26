@@ -1,4 +1,5 @@
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
+use crate::TimeStorageFormat;
 
 /// Converts delay values from RampMaker into timer ticks
 ///
@@ -16,5 +17,5 @@ pub trait DelayToTicks<Delay, const TIMER_HZ: u32> {
     fn delay_to_ticks(
         &self,
         delay: Delay,
-    ) -> Result<TimerDuration<TIMER_HZ>, Self::Error>;
+    ) -> Result<TimerDuration<TimeStorageFormat,TIMER_HZ>, Self::Error>;
 }

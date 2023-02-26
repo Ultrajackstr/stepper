@@ -19,14 +19,10 @@ use fugit::NanosDuration;
 
 use fugit_timer::Timer as TimerTrait;
 
-use crate::{
-    traits::{
-        EnableDirectionControl, EnableMotionControl, EnableStepControl,
-        EnableStepModeControl, MotionControl, SetDirection, SetStepMode, Step,
-    },
-    util::ref_mut::RefMut,
-    Direction,
-};
+use crate::{traits::{
+    EnableDirectionControl, EnableMotionControl, EnableStepControl,
+    EnableStepModeControl, MotionControl, SetDirection, SetStepMode, Step,
+}, util::ref_mut::RefMut, Direction, TimeStorageFormat};
 
 /// Unified stepper motor interface
 ///

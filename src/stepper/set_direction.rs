@@ -2,10 +2,10 @@ use core::task::Poll;
 
 use embedded_hal::digital::ErrorType;
 use embedded_hal::digital::OutputPin;
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
 use fugit_timer::Timer as TimerTrait;
 
-use crate::{traits::SetDirection, Direction};
+use crate::{traits::SetDirection, Direction, TimeStorageFormat};
 
 use super::SignalError;
 
@@ -86,7 +86,7 @@ where
                         .map_err(|err| SignalError::Pin(err))?,
                 }
 
-                let ticks: TimerDuration<TIMER_HZ> =
+                let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                     Driver::SETUP_TIME.convert();
                 self.timer
                     .start(ticks)

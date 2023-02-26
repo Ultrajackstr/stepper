@@ -1,7 +1,8 @@
 use core::{convert::Infallible, task::Poll};
 
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
 use fugit_timer::Timer as TimerTrait;
+use crate::TimeStorageFormat;
 
 use crate::traits::SetStepMode;
 
@@ -77,7 +78,7 @@ where
                     .apply_mode_config(self.step_mode)
                     .map_err(|err| SignalError::Pin(err))?;
 
-                let ticks: TimerDuration<TIMER_HZ> =
+                let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                     Driver::SETUP_TIME.convert();
 
                 self.timer
@@ -93,7 +94,7 @@ where
                         .enable_driver()
                         .map_err(|err| SignalError::Pin(err))?;
 
-                    let ticks: TimerDuration<TIMER_HZ> =
+                    let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                         Driver::HOLD_TIME.convert();
 
                     self.timer
