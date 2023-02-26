@@ -28,7 +28,7 @@ impl<Driver, Timer, const TIMER_HZ: u32>
     SetDirectionFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetDirection,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     /// Create new instance of `SetDirectionFuture`
     ///

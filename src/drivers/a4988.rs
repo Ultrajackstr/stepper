@@ -12,15 +12,13 @@
 use core::convert::Infallible;
 
 use embedded_hal::digital::{OutputPin, PinState};
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
 
-use crate::{
-    step_mode::StepMode16,
-    traits::{
-        EnableDirectionControl, EnableStepControl, EnableStepModeControl,
-        SetDirection, SetStepMode, Step as StepTrait,
-    },
-};
+
+use crate::{step_mode::StepMode16, TimeStorageFormat, traits::{
+    EnableDirectionControl, EnableStepControl, EnableStepModeControl,
+    SetDirection, SetStepMode, Step as StepTrait,
+}};
 
 /// The A4988 driver API
 ///
@@ -96,8 +94,8 @@ where
 {
     // Timing Requirements (page 6)
     // https://www.pololu.com/file/0J450/A4988.pdf
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(200);
-    const HOLD_TIME: Nanoseconds = Nanoseconds::from_ticks(200);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(200);
+    const HOLD_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(200);
 
     type Error = OutputPinError;
     type StepMode = StepMode16;
@@ -163,7 +161,7 @@ where
 {
     // Timing Requirements (page 6)
     // https://www.pololu.com/file/0J450/A4988.pdf
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(200);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(200);
 
     type Dir = Dir;
     type Error = Infallible;
@@ -204,7 +202,7 @@ where
 {
     // Timing Requirements (page 6)
     // https://www.pololu.com/file/0J450/A4988.pdf
-    const PULSE_LENGTH: Nanoseconds = Nanoseconds::from_ticks(1000); // 1µs
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(1000); // 1µs
 
     type Step = Step;
     type Error = Infallible;

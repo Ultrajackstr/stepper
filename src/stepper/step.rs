@@ -2,8 +2,9 @@ use core::task::Poll;
 
 use embedded_hal::digital::ErrorType;
 use embedded_hal::digital::OutputPin;
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
 use fugit_timer::Timer as TimerTrait;
+use crate::TimeStorageFormat;
 
 use crate::traits::Step;
 
@@ -26,7 +27,7 @@ pub struct StepFuture<Driver, Timer, const TIMER_HZ: u32> {
 impl<Driver, Timer, const TIMER_HZ: u32> StepFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: Step,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     /// Create new instance of `StepFuture`
     ///
@@ -75,7 +76,7 @@ where
                     .set_high()
                     .map_err(|err| SignalError::Pin(err))?;
 
-                let ticks: TimerDuration<TIMER_HZ> =
+                let ticks: TimerDuration<TimeStorageFormat, TIMER_HZ> =
                     Driver::PULSE_LENGTH.convert();
 
                 self.timer

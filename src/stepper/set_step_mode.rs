@@ -26,7 +26,7 @@ impl<Driver, Timer, const TIMER_HZ: u32>
     SetStepModeFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetStepMode,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     /// Create new instance of `SetStepModeFuture`
     ///

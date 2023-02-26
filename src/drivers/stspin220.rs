@@ -12,15 +12,13 @@
 use core::convert::Infallible;
 
 use embedded_hal::digital::{OutputPin, PinState};
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
 
-use crate::{
-    step_mode::StepMode256,
-    traits::{
-        EnableDirectionControl, EnableStepControl, EnableStepModeControl,
-        SetDirection, SetStepMode, Step,
-    },
-};
+
+use crate::{step_mode::StepMode256, TimeStorageFormat, traits::{
+    EnableDirectionControl, EnableStepControl, EnableStepModeControl,
+    SetDirection, SetStepMode, Step,
+}};
 
 /// The STSPIN220 driver API
 ///
@@ -109,8 +107,8 @@ where
     StepMode3: OutputPin<Error = OutputPinError>,
     DirMode4: OutputPin<Error = OutputPinError>,
 {
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(1_000);
-    const HOLD_TIME: Nanoseconds = Nanoseconds::from_ticks(100_000);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(1_000);
+    const HOLD_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(100_000);
 
     type Error = OutputPinError;
     type StepMode = StepMode256;
@@ -195,7 +193,7 @@ impl<
 where
     DirMode4: OutputPin<Error = OutputPinError>,
 {
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(100);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(100);
 
     type Dir = DirMode4;
     type Error = Infallible;
@@ -249,7 +247,7 @@ impl<
 where
     StepMode3: OutputPin<Error = OutputPinError>,
 {
-    const PULSE_LENGTH: Nanoseconds = Nanoseconds::from_ticks(100);
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(100);
 
     type Step = StepMode3;
     type Error = Infallible;

@@ -2,15 +2,12 @@ use core::task::Poll;
 
 use embedded_hal::digital::ErrorType;
 use fugit::{
-    NanosDurationU32 as Nanoseconds, TimerDurationU32 as TimerDuration,
+    NanosDurationU32 as NanosDuration<TimeStorageFormat>, TimerDurationU32 as TimerDuration,
 };
 use fugit_timer::Timer as TimerTrait;
 use ramp_maker::MotionProfile;
 
-use crate::{
-    traits::{SetDirection, Step},
-    Direction, SetDirectionFuture, StepFuture,
-};
+use crate::{traits::{SetDirection, Step}, Direction, SetDirectionFuture, StepFuture, TimeStorageFormat};
 
 use super::{
     error::{Error, TimeConversionError},
@@ -57,7 +54,7 @@ pub fn update<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>(
 )
 where
     Driver: SetDirection + Step,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     Profile: MotionProfile,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {
@@ -211,7 +208,7 @@ where
 
 fn delay_left<Delay, Convert, const TIMER_HZ: u32>(
     delay: Delay,
-    pulse_length: Nanoseconds,
+    pulse_length: NanosDuration<TimeStorageFormat>,
     convert: &Convert,
 ) -> Result<TimerDuration<TIMER_HZ>, TimeConversionError<Convert::Error>>
 where

@@ -30,7 +30,7 @@
 //! #     > {
 //! #
 //! use stepper::{
-//!     fugit::NanosDurationU32 as Nanoseconds,
+//!     fugit::NanosDurationU32 as NanosDuration<TimeStorageFormat>,
 //!     motion_control, ramp_maker,
 //!     Direction, Stepper,
 //! };
@@ -70,7 +70,7 @@
 //! #         }
 //! #     }
 //! #
-//! # fn delay_ns(_: Nanoseconds) {}
+//! # fn delay_ns(_: NanosDuration<TimeStorageFormat>) {}
 //! #
 //! // We need some `embedded_hal::digital::OutputPin` implementations connected
 //! // to the STEP and DIR signals of our driver chip. How you acquire those
