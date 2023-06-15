@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/drivers/drv8825/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/drivers/stspin220/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/drivers/tb67s128ftg/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
