@@ -30,7 +30,7 @@
 //! #     > {
 //! #
 //! use stepper::{
-//!     fugit::NanosDurationU32 as Nanoseconds,
+//!     fugit::NanosDuration<TimeStorageFormat>,
 //!     motion_control, ramp_maker,
 //!     Direction, Stepper,
 //! };
@@ -70,7 +70,7 @@
 //! #         }
 //! #     }
 //! #
-//! # fn delay_ns(_: Nanoseconds) {}
+//! # fn delay_ns(_: NanosDuration<TimeStorageFormat>) {}
 //! #
 //! // We need some `embedded_hal::digital::OutputPin` implementations connected
 //! // to the STEP and DIR signals of our driver chip. How you acquire those
@@ -162,6 +162,8 @@ pub extern crate embedded_hal;
 pub extern crate fugit;
 pub extern crate ramp_maker;
 
+pub use self::stepper::*;
+
 pub mod compat;
 pub mod drivers;
 pub mod motion_control;
@@ -171,7 +173,12 @@ pub mod util;
 
 mod stepper;
 
-pub use self::stepper::*;
+/// The type used to store time values, u32 (default) or u64
+#[cfg(feature = "u64")]
+pub type TimeStorageFormat = u64;
+/// The type used to store time values, u32 (default) or u64
+#[cfg(not(feature = "u64"))]
+pub type TimeStorageFormat = u32;
 
 /// Defines the direction in which to rotate the motor
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

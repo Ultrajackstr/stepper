@@ -12,15 +12,12 @@
 use core::convert::Infallible;
 
 use embedded_hal::digital::{OutputPin, PinState};
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
 
-use crate::{
-    step_mode::StepMode128,
-    traits::{
-        EnableDirectionControl, EnableStepControl, EnableStepModeControl,
-        SetDirection, SetStepMode, Step as StepTrait,
-    },
-};
+use crate::{step_mode::StepMode128, TimeStorageFormat, traits::{
+    EnableDirectionControl, EnableStepControl, EnableStepModeControl,
+    SetDirection, SetStepMode, Step as StepTrait,
+}};
 
 /// The Tb67s128ftg driver API
 ///
@@ -94,8 +91,8 @@ for tb67s128ftg<(), (), Reset, Mode0, Mode1, Mode2, Step, Dir>
 {
     // 19. AC Electrical Specification (page 42)
     // https://toshiba.semicon-storage.com/info/TB67S128FTG_datasheet_en_20210907.pdf?did=61073&prodName=TB67S128FTG
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
-    const HOLD_TIME: Nanoseconds = Nanoseconds::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
+    const HOLD_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
 
     type Error = OutputPinError;
     type StepMode = StepMode128;
@@ -163,7 +160,7 @@ for tb67s128ftg<(), (), Reset, Mode0, Mode1, Mode2, Step, Dir>
 {
     // 19. AC Electrical Specification (page 42)
     // https://toshiba.semicon-storage.com/info/TB67S128FTG_datasheet_en_20210907.pdf?did=61073&prodName=TB67S128FTG
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650); // Not specified in the datasheet, same as DRV8825 for now.
 
     type Dir = Dir;
     type Error = Infallible;
@@ -203,7 +200,7 @@ for tb67s128ftg<(), (), Reset, Mode0, Mode1, Mode2, Step, Dir>
 {
     // 19. AC Electrical Specification (page 42)
     // https://toshiba.semicon-storage.com/info/TB67S128FTG_datasheet_en_20210907.pdf?did=61073&prodName=TB67S128FTG
-    const PULSE_LENGTH: Nanoseconds = Nanoseconds::from_ticks(300);
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(300);
 
     type Step = Step;
     type Error = Infallible;

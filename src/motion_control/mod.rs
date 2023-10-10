@@ -14,18 +14,15 @@ pub use self::{
 use core::convert::Infallible;
 
 use embedded_hal::digital::ErrorType;
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
+
 use fugit_timer::Timer as TimerTrait;
 use ramp_maker::MotionProfile;
 use replace_with::replace_with_and_return;
 
-use crate::{
-    traits::{
-        EnableMotionControl, MotionControl, SetDirection, SetStepMode, Step,
-    },
-    util::ref_mut::RefMut,
-    Direction, SetDirectionFuture, SetStepModeFuture, StepFuture,
-};
+use crate::{traits::{
+    EnableMotionControl, MotionControl, SetDirection, SetStepMode, Step,
+}, util::ref_mut::RefMut, Direction, SetDirectionFuture, SetStepModeFuture, StepFuture, TimeStorageFormat};
 
 use self::state::State;
 
@@ -176,7 +173,7 @@ where
     >
     where
         Driver: SetStepMode,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => {
@@ -212,7 +209,7 @@ where
     >
     where
         Driver: SetDirection,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => SetDirectionFuture::new(
@@ -249,7 +246,7 @@ where
     >
     where
         Driver: Step,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => {
@@ -267,7 +264,7 @@ impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32> MotionControl
 where
     Driver: SetDirection + Step,
     Profile: MotionProfile,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     Profile::Velocity: Copy,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {
@@ -289,7 +286,7 @@ where
         let steps_from_here = target_step - self.current_step;
 
         self.profile
-            .enter_position_mode(max_velocity, steps_from_here.abs() as u32);
+            .enter_position_mode(max_velocity, steps_from_here.unsigned_abs());
 
         let direction = if steps_from_here > 0 {
             Direction::Forward
@@ -342,8 +339,8 @@ where
     Driver: SetStepMode,
     Profile: MotionProfile,
 {
-    const SETUP_TIME: Nanoseconds = Driver::SETUP_TIME;
-    const HOLD_TIME: Nanoseconds = Driver::HOLD_TIME;
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = Driver::SETUP_TIME;
+    const HOLD_TIME: NanosDuration<TimeStorageFormat> = Driver::HOLD_TIME;
 
     type Error = BusyError<Driver::Error>;
     type StepMode = Driver::StepMode;
@@ -355,7 +352,7 @@ where
         match self.driver_mut() {
             Some(driver) => driver
                 .apply_mode_config(step_mode)
-                .map_err(|err| BusyError::Other(err)),
+                .map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
@@ -363,7 +360,7 @@ where
     fn enable_driver(&mut self) -> Result<(), Self::Error> {
         match self.driver_mut() {
             Some(driver) => {
-                driver.enable_driver().map_err(|err| BusyError::Other(err))
+                driver.enable_driver().map_err(BusyError::Other)
             }
             None => Err(BusyError::Busy),
         }
@@ -376,14 +373,14 @@ where
     Driver: SetDirection,
     Profile: MotionProfile,
 {
-    const SETUP_TIME: Nanoseconds = Driver::SETUP_TIME;
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = Driver::SETUP_TIME;
 
     type Dir = Driver::Dir;
     type Error = BusyError<Driver::Error>;
 
     fn dir(&mut self) -> Result<&mut Self::Dir, Self::Error> {
         match self.driver_mut() {
-            Some(driver) => driver.dir().map_err(|err| BusyError::Other(err)),
+            Some(driver) => driver.dir().map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
@@ -395,14 +392,14 @@ where
     Driver: Step,
     Profile: MotionProfile,
 {
-    const PULSE_LENGTH: Nanoseconds = Driver::PULSE_LENGTH;
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = Driver::PULSE_LENGTH;
 
     type Step = Driver::Step;
     type Error = BusyError<Driver::Error>;
 
     fn step(&mut self) -> Result<&mut Self::Step, Self::Error> {
         match self.driver_mut() {
-            Some(driver) => driver.step().map_err(|err| BusyError::Other(err)),
+            Some(driver) => driver.step().map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
@@ -415,7 +412,7 @@ impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>
 where
     Driver: SetDirection + Step,
     Profile: MotionProfile,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     Profile::Velocity: Copy,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {

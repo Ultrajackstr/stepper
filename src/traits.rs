@@ -21,9 +21,10 @@
 //! [`Stepper`]: crate::Stepper
 
 use embedded_hal::digital::OutputPin;
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
 
 use crate::step_mode::StepMode;
+use crate::TimeStorageFormat;
 
 /// Enable microstepping mode control for a driver
 ///
@@ -43,10 +44,10 @@ pub trait EnableStepModeControl<Resources> {
 /// Implemented by drivers that support controlling the microstepping mode
 pub trait SetStepMode {
     /// The time the mode signals need to be held before re-enabling the driver
-    const SETUP_TIME: Nanoseconds;
+    const SETUP_TIME: NanosDuration<TimeStorageFormat>;
 
     /// The time the mode signals need to be held after re-enabling the driver
-    const HOLD_TIME: Nanoseconds;
+    const HOLD_TIME: NanosDuration<TimeStorageFormat>;
 
     /// The error that can occur while using this trait
     type Error;
@@ -87,7 +88,7 @@ pub trait EnableDirectionControl<Resources> {
 /// Implemented by drivers that support controlling the DIR signal
 pub trait SetDirection {
     /// The time that the DIR signal must be held for a change to apply
-    const SETUP_TIME: Nanoseconds;
+    const SETUP_TIME: NanosDuration<TimeStorageFormat>;
 
     /// The type of the DIR pin
     type Dir: OutputPin;
@@ -114,7 +115,7 @@ pub trait EnableStepControl<Resources> {
 /// Implemented by drivers that support controlling the STEP signal
 pub trait Step {
     /// The minimum length of a STEP pulse
-    const PULSE_LENGTH: Nanoseconds;
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat>;
 
     /// The type of the STEP pin
     type Step: OutputPin;

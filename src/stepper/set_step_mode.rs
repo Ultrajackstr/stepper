@@ -1,7 +1,8 @@
 use core::{convert::Infallible, task::Poll};
 
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
 use fugit_timer::Timer as TimerTrait;
+use crate::TimeStorageFormat;
 
 use crate::traits::SetStepMode;
 
@@ -26,7 +27,7 @@ impl<Driver, Timer, const TIMER_HZ: u32>
     SetStepModeFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetStepMode,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     /// Create new instance of `SetStepModeFuture`
     ///
@@ -75,14 +76,14 @@ where
             State::Initial => {
                 self.driver
                     .apply_mode_config(self.step_mode)
-                    .map_err(|err| SignalError::Pin(err))?;
+                    .map_err(SignalError::Pin)?;
 
-                let ticks: TimerDuration<TIMER_HZ> =
+                let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                     Driver::SETUP_TIME.convert();
 
                 self.timer
                     .start(ticks)
-                    .map_err(|err| SignalError::Timer(err))?;
+                    .map_err(SignalError::Timer)?;
 
                 self.state = State::ApplyingConfig;
                 Poll::Pending
@@ -91,14 +92,14 @@ where
                 Ok(()) => {
                     self.driver
                         .enable_driver()
-                        .map_err(|err| SignalError::Pin(err))?;
+                        .map_err(SignalError::Pin)?;
 
-                    let ticks: TimerDuration<TIMER_HZ> =
+                    let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                         Driver::HOLD_TIME.convert();
 
                     self.timer
                         .start(ticks)
-                        .map_err(|err| SignalError::Timer(err))?;
+                        .map_err(SignalError::Timer)?;
 
                     self.state = State::EnablingDriver;
                     Poll::Ready(Ok(()))

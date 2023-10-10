@@ -15,17 +15,14 @@ pub use self::{
 use core::convert::Infallible;
 
 use embedded_hal::digital::ErrorType;
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
+
 use fugit_timer::Timer as TimerTrait;
 
-use crate::{
-    traits::{
-        EnableDirectionControl, EnableMotionControl, EnableStepControl,
-        EnableStepModeControl, MotionControl, SetDirection, SetStepMode, Step,
-    },
-    util::ref_mut::RefMut,
-    Direction,
-};
+use crate::{traits::{
+    EnableDirectionControl, EnableMotionControl, EnableStepControl,
+    EnableStepModeControl, MotionControl, SetDirection, SetStepMode, Step,
+}, util::ref_mut::RefMut, Direction, TimeStorageFormat};
 
 /// Unified stepper motor interface
 ///
@@ -161,7 +158,7 @@ impl<Driver> Stepper<Driver> {
     >
     where
         Driver: EnableStepModeControl<Resources>,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         let mut self_ = Stepper {
             driver: self.driver.enable_step_mode_control(res),
@@ -187,7 +184,7 @@ impl<Driver> Stepper<Driver> {
     ) -> SetStepModeFuture<RefMut<'r, Driver>, RefMut<'r, Timer>, TIMER_HZ>
     where
         Driver: SetStepMode,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         SetStepModeFuture::new(
             step_mode,
@@ -225,7 +222,7 @@ impl<Driver> Stepper<Driver> {
     >
     where
         Driver: EnableDirectionControl<Resources>,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         let mut self_ = Stepper {
             driver: self.driver.enable_direction_control(res),
@@ -246,7 +243,7 @@ impl<Driver> Stepper<Driver> {
     ) -> SetDirectionFuture<RefMut<'r, Driver>, RefMut<'r, Timer>, TIMER_HZ>
     where
         Driver: SetDirection,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         SetDirectionFuture::new(
             direction,
@@ -295,7 +292,7 @@ impl<Driver> Stepper<Driver> {
     ) -> StepFuture<RefMut<'r, Driver>, RefMut<'r, Timer>, TIMER_HZ>
     where
         Driver: Step,
-        Timer: TimerTrait<TIMER_HZ>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
     {
         StepFuture::new(RefMut(&mut self.driver), RefMut(timer))
     }
@@ -307,7 +304,7 @@ impl<Driver> Stepper<Driver> {
     ///
     /// You might need to call [`Stepper::enable_step_control`] to make this
     /// method available.
-    pub fn pulse_length(&self) -> Nanoseconds
+    pub fn pulse_length(&self) -> NanosDuration<TimeStorageFormat>
     where
         Driver: Step,
     {
@@ -361,11 +358,11 @@ impl<Driver> Stepper<Driver> {
     ///
     /// You might need to call [`Stepper::enable_motion_control`] to make this
     /// method available.
-    pub fn move_to_position<'r>(
-        &'r mut self,
+    pub fn move_to_position(
+        &mut self,
         max_velocity: Driver::Velocity,
         target_step: i32,
-    ) -> MoveToFuture<RefMut<'r, Driver>>
+    ) -> MoveToFuture<RefMut<Driver>>
     where
         Driver: MotionControl,
     {

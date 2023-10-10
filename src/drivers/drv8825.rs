@@ -12,15 +12,13 @@
 use core::convert::Infallible;
 
 use embedded_hal::digital::{OutputPin, PinState};
-use fugit::NanosDurationU32 as Nanoseconds;
+use fugit::NanosDuration;
 
-use crate::{
-    step_mode::StepMode32,
-    traits::{
-        EnableDirectionControl, EnableStepControl, EnableStepModeControl,
-        SetDirection, SetStepMode, Step as StepTrait,
-    },
-};
+
+use crate::{step_mode::StepMode32, TimeStorageFormat, traits::{
+    EnableDirectionControl, EnableStepControl, EnableStepModeControl,
+    SetDirection, SetStepMode, Step as StepTrait,
+}};
 
 /// The DRV8825 driver API
 ///
@@ -97,8 +95,8 @@ where
 {
     // 7.6 Timing Requirements (page 7)
     // https://www.ti.com/lit/ds/symlink/drv8825.pdf
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(650);
-    const HOLD_TIME: Nanoseconds = Nanoseconds::from_ticks(650);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650);
+    const HOLD_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650);
 
     type Error = OutputPinError;
     type StepMode = StepMode32;
@@ -165,7 +163,7 @@ where
 {
     // 7.6 Timing Requirements (page 7)
     // https://www.ti.com/lit/ds/symlink/drv8825.pdf
-    const SETUP_TIME: Nanoseconds = Nanoseconds::from_ticks(650);
+    const SETUP_TIME: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(650);
 
     type Dir = Dir;
     type Error = Infallible;
@@ -206,7 +204,7 @@ where
 {
     // 7.6 Timing Requirements (page 7)
     // https://www.ti.com/lit/ds/symlink/drv8825.pdf
-    const PULSE_LENGTH: Nanoseconds = Nanoseconds::from_ticks(1900);
+    const PULSE_LENGTH: NanosDuration<TimeStorageFormat> = NanosDuration::<TimeStorageFormat>::from_ticks(1900);
 
     type Step = Step;
     type Error = Infallible;

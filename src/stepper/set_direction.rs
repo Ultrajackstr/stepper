@@ -2,10 +2,10 @@ use core::task::Poll;
 
 use embedded_hal::digital::ErrorType;
 use embedded_hal::digital::OutputPin;
-use fugit::TimerDurationU32 as TimerDuration;
+use fugit::TimerDuration;
 use fugit_timer::Timer as TimerTrait;
 
-use crate::{traits::SetDirection, Direction};
+use crate::{traits::SetDirection, Direction, TimeStorageFormat};
 
 use super::SignalError;
 
@@ -28,7 +28,7 @@ impl<Driver, Timer, const TIMER_HZ: u32>
     SetDirectionFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetDirection,
-    Timer: TimerTrait<TIMER_HZ>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {
     /// Create new instance of `SetDirectionFuture`
     ///
@@ -75,22 +75,22 @@ where
                     Direction::Forward => self
                         .driver
                         .dir()
-                        .map_err(|err| SignalError::PinUnavailable(err))?
+                        .map_err(SignalError::PinUnavailable)?
                         .set_high()
-                        .map_err(|err| SignalError::Pin(err))?,
+                        .map_err(SignalError::Pin)?,
                     Direction::Backward => self
                         .driver
                         .dir()
-                        .map_err(|err| SignalError::PinUnavailable(err))?
+                        .map_err(SignalError::PinUnavailable)?
                         .set_low()
-                        .map_err(|err| SignalError::Pin(err))?,
+                        .map_err(SignalError::Pin)?,
                 }
 
-                let ticks: TimerDuration<TIMER_HZ> =
+                let ticks: TimerDuration<TimeStorageFormat,TIMER_HZ> =
                     Driver::SETUP_TIME.convert();
                 self.timer
                     .start(ticks)
-                    .map_err(|err| SignalError::Timer(err))?;
+                    .map_err(SignalError::Timer)?;
 
                 self.state = State::DirectionSet;
                 Poll::Pending
