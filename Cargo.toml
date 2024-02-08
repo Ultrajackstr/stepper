@@ -51,7 +51,7 @@ default-features = false
 
 
 [dev-dependencies]
-fixed = "2.0.0-alpha.12"
+fixed = "2.0.0-alpha.25.1"
 #typenum = "1.17.0"
 
 
