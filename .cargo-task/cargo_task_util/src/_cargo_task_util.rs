@@ -117,7 +117,6 @@ impl CTEnv {
         });
 
         let mut f = ct_check_fatal!(std::fs::OpenOptions::new()
-            .write(true)
             .append(true)
             .create(true)
             .open(&p));
@@ -183,7 +182,7 @@ pub fn ct_log(lvl: CTLogLevel, text: &str) {
 
     let task_name = std::env::var_os("CT_CUR_TASK")
         .map(|s| s.to_string_lossy().to_string())
-        .unwrap_or_else(|| "".to_string());
+        .unwrap_or_default();
 
     let t_colon = if task_name.is_empty() { "" } else { ":" };
 

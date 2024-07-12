@@ -60,7 +60,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
 
         // Create the driver directory, as well as its 'src' subdirectory.
-        create_dir_all(&driver_path.join("src"))?;
+        create_dir_all(driver_path.join("src"))?;
 
         // Render each template using the current `Context` instance.
         let cargo_toml_output = tt.render("cargo_toml", ctx)?;
@@ -68,13 +68,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         let readme_md_output = tt.render("readme_md", ctx)?;
 
         // Create each output file and write out their contents.
-        File::create(&driver_path.join("Cargo.toml"))?
+        File::create(driver_path.join("Cargo.toml"))?
             .write_all(cargo_toml_output.as_ref())?;
 
-        File::create(&driver_path.join("src").join("lib.rs"))?
+        File::create(driver_path.join("src").join("lib.rs"))?
             .write_all(lib_rs_output.as_ref())?;
 
-        File::create(&driver_path.join("README.md"))?
+        File::create(driver_path.join("README.md"))?
             .write_all(readme_md_output.as_ref())?;
     }
 
