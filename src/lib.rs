@@ -157,7 +157,7 @@
 
 #![cfg_attr(not(test), no_std)]
 #![deny(missing_docs, rustdoc::broken_intra_doc_links)]
-
+#![allow(non_camel_case_types)]
 pub extern crate embedded_hal;
 pub extern crate fugit;
 pub extern crate ramp_maker;
