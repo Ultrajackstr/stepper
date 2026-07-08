@@ -17,14 +17,14 @@ use super::SignalError;
 ///
 /// [`Stepper::set_direction`]: crate::Stepper::set_direction
 #[must_use]
-pub struct SetDirectionFuture<Driver, Timer, const TIMER_HZ: u32> {
+pub struct SetDirectionFuture<Driver, Timer, const TIMER_HZ: u64> {
     direction: Direction,
     driver: Driver,
     timer: Timer,
     state: State,
 }
 
-impl<Driver, Timer, const TIMER_HZ: u32>
+impl<Driver, Timer, const TIMER_HZ: u64>
     SetDirectionFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetDirection,

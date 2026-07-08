@@ -16,14 +16,14 @@ use super::SignalError;
 ///
 /// [`Stepper::set_step_mode`]: crate::Stepper::set_step_mode
 #[must_use]
-pub struct SetStepModeFuture<Driver: SetStepMode, Timer, const TIMER_HZ: u32> {
+pub struct SetStepModeFuture<Driver: SetStepMode, Timer, const TIMER_HZ: u64> {
     step_mode: Driver::StepMode,
     driver: Driver,
     timer: Timer,
     state: State,
 }
 
-impl<Driver, Timer, const TIMER_HZ: u32>
+impl<Driver, Timer, const TIMER_HZ: u64>
     SetStepModeFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: SetStepMode,

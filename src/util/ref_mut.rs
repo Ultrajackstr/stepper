@@ -19,7 +19,7 @@ use crate::traits::{MotionControl, SetDirection, SetStepMode, Step};
 /// possible to move types into them, or just provide mutable references.
 pub struct RefMut<'r, T>(pub &'r mut T);
 
-impl<'r, T, const TIMER_HZ: u32> Timer<TIMER_HZ> for RefMut<'r, T>
+impl<'r, T, const TIMER_HZ: u64> Timer<TIMER_HZ> for RefMut<'r, T>
     where
         T: Timer<TIMER_HZ, TimeStorage=TimeStorageFormat>,
 {

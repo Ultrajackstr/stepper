@@ -18,13 +18,13 @@ use super::SignalError;
 ///
 /// [`Stepper::step`]: crate::Stepper::step
 #[must_use]
-pub struct StepFuture<Driver, Timer, const TIMER_HZ: u32> {
+pub struct StepFuture<Driver, Timer, const TIMER_HZ: u64> {
     driver: Driver,
     timer: Timer,
     state: State,
 }
 
-impl<Driver, Timer, const TIMER_HZ: u32> StepFuture<Driver, Timer, TIMER_HZ>
+impl<Driver, Timer, const TIMER_HZ: u64> StepFuture<Driver, Timer, TIMER_HZ>
 where
     Driver: Step,
     Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,

@@ -50,11 +50,11 @@
 //! #     fn set_high(&mut self) -> Result<(), Self::Error> { Ok(()) }
 //! # }
 //! #
-//! # struct Timer<const TIMER_HZ: u32>;
-//! #     impl<const TIMER_HZ: u32> Timer<TIMER_HZ> {
+//! # struct Timer<const TIMER_HZ: u64>;
+//! #     impl<const TIMER_HZ: u64> Timer<TIMER_HZ> {
 //! #         pub fn new() -> Self {  Self {} }
 //! #     }
-//! #     impl<const TIMER_HZ: u32> fugit_timer::Timer<TIMER_HZ> for Timer<TIMER_HZ>{
+//! #     impl<const TIMER_HZ: u64> fugit_timer::Timer<TIMER_HZ> for Timer<TIMER_HZ>{
 //! #         type Error = std::convert::Infallible;
 //! #         fn now(&mut self) -> fugit::TimerInstantU32<TIMER_HZ> {
 //! #             todo!()
@@ -139,7 +139,7 @@
 //! // is pretty simple (and cheap).
 //! use num_traits::cast::ToPrimitive;
 //! pub struct DelayToTicks;
-//! impl<const TIMER_HZ: u32> motion_control::DelayToTicks<Num, TIMER_HZ> for DelayToTicks {
+//! impl<const TIMER_HZ: u64> motion_control::DelayToTicks<Num, TIMER_HZ> for DelayToTicks {
 //!     type Error = core::convert::Infallible;
 //!
 //!     fn delay_to_ticks(&self, delay: Num)

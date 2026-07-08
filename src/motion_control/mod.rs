@@ -20,9 +20,14 @@ use fugit_timer::Timer as TimerTrait;
 use ramp_maker::MotionProfile;
 use replace_with::replace_with_and_return;
 
-use crate::{traits::{
-    EnableMotionControl, MotionControl, SetDirection, SetStepMode, Step,
-}, util::ref_mut::RefMut, Direction, SetDirectionFuture, SetStepModeFuture, StepFuture, TimeStorageFormat};
+use crate::{
+    traits::{
+        EnableMotionControl, MotionControl, SetDirection, SetStepMode, Step,
+    },
+    util::ref_mut::RefMut,
+    Direction, SetDirectionFuture, SetStepModeFuture, StepFuture,
+    TimeStorageFormat,
+};
 
 use self::state::State;
 
@@ -42,7 +47,7 @@ pub struct SoftwareMotionControl<
     Timer,
     Profile: MotionProfile,
     Convert,
-    const TIMER_HZ: u32,
+    const TIMER_HZ: u64,
 > {
     state: State<Driver, Timer, Profile, TIMER_HZ>,
     new_motion: Option<Direction>,
@@ -52,7 +57,7 @@ pub struct SoftwareMotionControl<
     convert: Convert,
 }
 
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64>
     SoftwareMotionControl<Driver, Timer, Profile, Convert, TIMER_HZ>
 where
     Profile: MotionProfile,
@@ -173,7 +178,7 @@ where
     >
     where
         Driver: SetStepMode,
-        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => {
@@ -209,7 +214,7 @@ where
     >
     where
         Driver: SetDirection,
-        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => SetDirectionFuture::new(
@@ -246,7 +251,7 @@ where
     >
     where
         Driver: Step,
-        Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+        Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     {
         let future = match &mut self.state {
             State::Idle { driver, timer } => {
@@ -259,12 +264,12 @@ where
     }
 }
 
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32> MotionControl
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64> MotionControl
     for SoftwareMotionControl<Driver, Timer, Profile, Convert, TIMER_HZ>
 where
     Driver: SetDirection + Step,
     Profile: MotionProfile,
-    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     Profile::Velocity: Copy,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {
@@ -333,7 +338,7 @@ where
 // mostly means we'd have to be idle. Since the "enable" traits are infallible,
 // we'd have to panic, and I don't know if that would be worth it.
 
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32> SetStepMode
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64> SetStepMode
     for SoftwareMotionControl<Driver, Timer, Profile, Convert, TIMER_HZ>
 where
     Driver: SetStepMode,
@@ -359,15 +364,13 @@ where
 
     fn enable_driver(&mut self) -> Result<(), Self::Error> {
         match self.driver_mut() {
-            Some(driver) => {
-                driver.enable_driver().map_err(BusyError::Other)
-            }
+            Some(driver) => driver.enable_driver().map_err(BusyError::Other),
             None => Err(BusyError::Busy),
         }
     }
 }
 
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32> SetDirection
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64> SetDirection
     for SoftwareMotionControl<Driver, Timer, Profile, Convert, TIMER_HZ>
 where
     Driver: SetDirection,
@@ -386,7 +389,7 @@ where
     }
 }
 
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32> Step
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64> Step
     for SoftwareMotionControl<Driver, Timer, Profile, Convert, TIMER_HZ>
 where
     Driver: Step,
@@ -407,12 +410,12 @@ where
 
 // Blanket implementation of `EnableMotionControl` for all STEP/DIR stepper
 // drivers.
-impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>
+impl<Driver, Timer, Profile, Convert, const TIMER_HZ: u64>
     EnableMotionControl<(Timer, Profile, Convert), TIMER_HZ> for Driver
 where
     Driver: SetDirection + Step,
     Profile: MotionProfile,
-    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     Profile::Velocity: Copy,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {

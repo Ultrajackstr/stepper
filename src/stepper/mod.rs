@@ -143,7 +143,7 @@ impl<Driver> Stepper<Driver> {
     /// This method is only available, if the driver supports enabling step mode
     /// control. It might no longer be available, once step mode control has
     /// been enabled.
-    pub fn enable_step_mode_control<Resources, Timer, const TIMER_HZ: u32>(
+    pub fn enable_step_mode_control<Resources, Timer, const TIMER_HZ: u64>(
         self,
         res: Resources,
         initial: <Driver::WithStepModeControl as SetStepMode>::StepMode,
@@ -177,7 +177,7 @@ impl<Driver> Stepper<Driver> {
     ///
     /// You might need to call [`Stepper::enable_step_mode_control`] to make
     /// this method available.
-    pub fn set_step_mode<'r, Timer, const TIMER_HZ: u32>(
+    pub fn set_step_mode<'r, Timer, const TIMER_HZ: u64>(
         &'r mut self,
         step_mode: Driver::StepMode,
         timer: &'r mut Timer,
@@ -207,7 +207,7 @@ impl<Driver> Stepper<Driver> {
     /// This method is only available, if the driver supports enabling direction
     /// control. It might no longer be available, once direction control has
     /// been enabled.
-    pub fn enable_direction_control<Resources, Timer, const TIMER_HZ: u32>(
+    pub fn enable_direction_control<Resources, Timer, const TIMER_HZ: u64>(
         self,
         res: Resources,
         initial: Direction,
@@ -236,7 +236,7 @@ impl<Driver> Stepper<Driver> {
     ///
     /// You might need to call [`Stepper::enable_direction_control`] to make
     /// this method available.
-    pub fn set_direction<'r, Timer, const TIMER_HZ: u32>(
+    pub fn set_direction<'r, Timer, const TIMER_HZ: u64>(
         &'r mut self,
         direction: Direction,
         timer: &'r mut Timer,
@@ -286,7 +286,7 @@ impl<Driver> Stepper<Driver> {
     ///
     /// You might need to call [`Stepper::enable_step_control`] to make this
     /// method available.
-    pub fn step<'r, Timer, const TIMER_HZ: u32>(
+    pub fn step<'r, Timer, const TIMER_HZ: u64>(
         &'r mut self,
         timer: &'r mut Timer,
     ) -> StepFuture<RefMut<'r, Driver>, RefMut<'r, Timer>, TIMER_HZ>
@@ -330,7 +330,7 @@ impl<Driver> Stepper<Driver> {
     /// hardware support, or through the aforementioned software fallback. It
     /// might no longer be available, once motion control support has been
     /// enabled.
-    pub fn enable_motion_control<Resources, const TIMER_HZ: u32>(
+    pub fn enable_motion_control<Resources, const TIMER_HZ: u64>(
         self,
         res: Resources,
     ) -> Stepper<Driver::WithMotionControl>

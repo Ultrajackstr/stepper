@@ -9,7 +9,7 @@ use crate::TimeStorageFormat;
 /// environment.
 ///
 /// The `Delay` parameter specifies the type of delay value used by RampMaker.
-pub trait DelayToTicks<Delay, const TIMER_HZ: u32> {
+pub trait DelayToTicks<Delay, const TIMER_HZ: u64> {
     /// The error that can happen during conversion
     type Error;
 

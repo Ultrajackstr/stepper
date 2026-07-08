@@ -5,14 +5,17 @@ use fugit::{NanosDuration, TimerDuration};
 use fugit_timer::Timer as TimerTrait;
 use ramp_maker::MotionProfile;
 
-use crate::{traits::{SetDirection, Step}, Direction, SetDirectionFuture, StepFuture, TimeStorageFormat};
+use crate::{
+    traits::{SetDirection, Step},
+    Direction, SetDirectionFuture, StepFuture, TimeStorageFormat,
+};
 
 use super::{
     error::{Error, TimeConversionError},
     DelayToTicks,
 };
 
-pub enum State<Driver, Timer, Profile: MotionProfile, const TIMER_HZ: u32> {
+pub enum State<Driver, Timer, Profile: MotionProfile, const TIMER_HZ: u64> {
     Idle {
         driver: Driver,
         timer: Timer,
@@ -29,7 +32,7 @@ pub enum State<Driver, Timer, Profile: MotionProfile, const TIMER_HZ: u32> {
     Invalid,
 }
 
-pub fn update<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>(
+pub fn update<Driver, Timer, Profile, Convert, const TIMER_HZ: u64>(
     mut state: State<Driver, Timer, Profile, TIMER_HZ>,
     new_motion: &mut Option<Direction>,
     profile: &mut Profile,
@@ -52,7 +55,7 @@ pub fn update<Driver, Timer, Profile, Convert, const TIMER_HZ: u32>(
 )
 where
     Driver: SetDirection + Step,
-    Timer: TimerTrait<TIMER_HZ, TimeStorage=TimeStorageFormat>,
+    Timer: TimerTrait<TIMER_HZ, TimeStorage = TimeStorageFormat>,
     Profile: MotionProfile,
     Convert: DelayToTicks<Profile::Delay, TIMER_HZ>,
 {
@@ -127,20 +130,22 @@ where
                         *current_step += *current_direction as i32;
 
                         let (driver, mut timer) = future.release();
-                        let delay_left: TimerDuration<TimeStorageFormat,TIMER_HZ> =
-                            match delay_left(
-                                delay,
-                                Driver::PULSE_LENGTH,
-                                convert,
-                            ) {
-                                Ok(delay_left) => delay_left,
-                                Err(err) => {
-                                    return (
-                                        Err(Error::TimeConversion(err)),
-                                        State::Idle { driver, timer },
-                                    )
-                                }
-                            };
+                        let delay_left: TimerDuration<
+                            TimeStorageFormat,
+                            TIMER_HZ,
+                        > = match delay_left(
+                            delay,
+                            Driver::PULSE_LENGTH,
+                            convert,
+                        ) {
+                            Ok(delay_left) => delay_left,
+                            Err(err) => {
+                                return (
+                                    Err(Error::TimeConversion(err)),
+                                    State::Idle { driver, timer },
+                                )
+                            }
+                        };
 
                         if let Err(err) = timer.start(delay_left) {
                             return (
@@ -204,18 +209,22 @@ where
     }
 }
 
-fn delay_left<Delay, Convert, const TIMER_HZ: u32>(
+fn delay_left<Delay, Convert, const TIMER_HZ: u64>(
     delay: Delay,
     pulse_length: NanosDuration<TimeStorageFormat>,
     convert: &Convert,
-) -> Result<TimerDuration<TimeStorageFormat,TIMER_HZ>, TimeConversionError<Convert::Error>>
+) -> Result<
+    TimerDuration<TimeStorageFormat, TIMER_HZ>,
+    TimeConversionError<Convert::Error>,
+>
 where
     Convert: DelayToTicks<Delay, TIMER_HZ>,
 {
-    let delay: TimerDuration<TimeStorageFormat,TIMER_HZ> = convert
+    let delay: TimerDuration<TimeStorageFormat, TIMER_HZ> = convert
         .delay_to_ticks(delay)
         .map_err(TimeConversionError::DelayToTicks)?;
-    let pulse_length: TimerDuration<TimeStorageFormat,TIMER_HZ> = pulse_length.convert();
+    let pulse_length: TimerDuration<TimeStorageFormat, TIMER_HZ> =
+        pulse_length.convert();
 
     let delay_left = delay - pulse_length;
     Ok(delay_left)
