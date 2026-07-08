@@ -173,7 +173,7 @@ where
         &mut self,
         step_mode: Driver::StepMode,
     ) -> Result<
-        SetStepModeFuture<RefMut<Driver>, RefMut<Timer>, TIMER_HZ>,
+        SetStepModeFuture<RefMut<'_, Driver>, RefMut<'_, Timer>, TIMER_HZ>,
         BusyError<Infallible>,
     >
     where
@@ -209,7 +209,7 @@ where
         &mut self,
         direction: Direction,
     ) -> Result<
-        SetDirectionFuture<RefMut<Driver>, RefMut<Timer>, TIMER_HZ>,
+        SetDirectionFuture<RefMut<'_, Driver>, RefMut<'_, Timer>, TIMER_HZ>,
         BusyError<Infallible>,
     >
     where
@@ -246,7 +246,7 @@ where
     pub fn step(
         &mut self,
     ) -> Result<
-        StepFuture<RefMut<Driver>, RefMut<Timer>, TIMER_HZ>,
+        StepFuture<RefMut<'_, Driver>, RefMut<'_, Timer>, TIMER_HZ>,
         BusyError<Infallible>,
     >
     where

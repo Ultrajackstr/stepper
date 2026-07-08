@@ -89,8 +89,7 @@ impl CTEnv {
     pub fn exec(&self, mut cmd: std::process::Command) -> std::io::Result<()> {
         let non_zero_err = format!("{:?} exited non-zero", cmd);
         if !cmd.spawn()?.wait()?.success() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
+            return Err(std::io::Error::other(
                 non_zero_err,
             ));
         }

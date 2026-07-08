@@ -362,7 +362,7 @@ impl<Driver> Stepper<Driver> {
         &mut self,
         max_velocity: Driver::Velocity,
         target_step: i32,
-    ) -> MoveToFuture<RefMut<Driver>>
+    ) -> MoveToFuture<RefMut<'_, Driver>>
     where
         Driver: MotionControl,
     {
