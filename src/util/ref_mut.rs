@@ -2,7 +2,7 @@
 //!
 //! See [`RefMut`] for more information.
 
-use fugit::{NanosDuration, TimerDuration, TimerInstant};
+use fugit::{NanosDuration, TimerDuration, WrappingTimerInstant};
 use fugit_timer::Timer;
 
 use crate::TimeStorageFormat;
@@ -26,7 +26,7 @@ impl<'r, T, const TIMER_HZ: u64> Timer<TIMER_HZ> for RefMut<'r, T>
     type Error = T::Error;
     type TimeStorage = TimeStorageFormat;
 
-    fn now(&mut self) -> TimerInstant<TimeStorageFormat, TIMER_HZ> {
+    fn now(&mut self) -> WrappingTimerInstant<TimeStorageFormat, TIMER_HZ> {
         self.0.now()
     }
 
